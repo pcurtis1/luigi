@@ -862,7 +862,7 @@ class Scheduler(object):
                 
             new_status = PENDING if status == SUSPENDED else status
             if new_status == FAILED and kwargs['soft_fail']:
-                new_status = DONE
+                task.soft_fail = True
                 
             self._state.set_status(task, new_status, self._config)
 
@@ -1039,7 +1039,13 @@ class Scheduler(object):
             return False
         for dep in task.deps:
             dep_task = self._state.get_task(dep, default=None)
-            if dep_task is None or dep_task.status != DONE:
+
+            try:
+                soft_fail = dep_task.soft_fail
+            except AttributeError:
+                soft_fail = False
+                
+            if dep_task is None or (dep_task.status != DONE and soft_fail != True):
                 return False
         return True
 
