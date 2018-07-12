@@ -859,7 +859,12 @@ class Scheduler(object):
                 # We also check for status == PENDING b/c that's the default value
                 # (so checking for status != task.status woule lie)
                 self._update_task_history(task, status)
-            self._state.set_status(task, PENDING if status == SUSPENDED else status, self._config)
+                
+            new_status = PENDING if status == SUSPENDED else status
+            if new_status == FAILED and kwargs['soft_fail']:
+                new_status = DONE
+                
+            self._state.set_status(task, new_status, self._config)
 
         if status == FAILED and self._config.batch_emails:
             batched_params, _ = self._state.get_batcher(worker_id, family)

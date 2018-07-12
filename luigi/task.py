@@ -899,3 +899,6 @@ def _task_wraps(task_class):
     # functions, but it works for classes too, if you pass updated=[]
     assigned = functools.WRAPPER_ASSIGNMENTS + ('_namespace_at_class_time',)
     return functools.wraps(task_class, assigned=assigned, updated=[])
+
+class SoftFailTask():
+    pass

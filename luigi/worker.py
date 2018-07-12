@@ -57,7 +57,7 @@ from luigi.task_register import load_task
 from luigi.scheduler import DISABLED, DONE, FAILED, PENDING, UNKNOWN, Scheduler, RetryPolicy
 from luigi.scheduler import WORKER_STATE_ACTIVE, WORKER_STATE_DISABLED
 from luigi.target import Target
-from luigi.task import Task, flatten, getpaths, Config
+from luigi.task import Task, SoftFailTask, flatten, getpaths, Config
 from luigi.task_register import TaskClassException
 from luigi.task_status import RUNNING
 from luigi.parameter import BoolParameter, FloatParameter, IntParameter, Parameter
@@ -1070,7 +1070,8 @@ class Worker(object):
                            module=task.task_module,
                            new_deps=new_deps,
                            assistant=self._assistant,
-                           retry_policy_dict=_get_retry_policy_dict(task))
+                           retry_policy_dict=_get_retry_policy_dict(task),
+                           soft_fail=isinstance(task,SoftFailTask))
 
             self._running_tasks.pop(task_id)
 
