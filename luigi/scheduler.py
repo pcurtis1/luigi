@@ -1044,13 +1044,12 @@ class Scheduler(object):
                 soft_fail = dep_task.soft_fail
             except AttributeError:
                 soft_fail = False
-                
+            
+            # keep the default luigi behaviour where soft_fail is not set
             if dep_task is None or (dep_task.status != DONE and soft_fail != True):
                 return False
             
-            if dep_task is None:
-                return False
-            
+            # when soft_fail is set, the task is schedulable only if the status is failed. Not schedulable in all other NOT DONE scenarios
             if dep_task.status != DONE:
                 if not(dep_task.status == FAILED and soft_fail == True):
                     return False
