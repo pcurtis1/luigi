@@ -1047,6 +1047,14 @@ class Scheduler(object):
                 
             if dep_task is None or (dep_task.status != DONE and soft_fail != True):
                 return False
+            
+            if dep_task is None:
+                return False
+            
+            if dep_task.status != DONE:
+                if not(dep_task.status == FAILED and soft_fail == True):
+                    return False
+            
         return True
 
     def _reset_orphaned_batch_running_tasks(self, worker_id):
